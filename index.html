@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
+  <title>GO:NE</title>
+  <meta
+    name="description"
+    content="GO:NE conversation cards"
+  />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['"Playfair Display"', 'serif'],
+            body: ['"DM Sans"', 'sans-serif'],
+          },
+          colors: {
+            gone: {
+              primary: '#efe6cb',
+              accent: '#b7a26b',
+              bg: '#ffffff',
+              text: '#3c412f',
+            }
+          },
+          boxShadow: {
+            soft: '0 10px 30px rgba(60, 65, 47, 0.08)',
+          },
+          borderRadius: {
+            card: '2rem',
+            pill: '999px',
+          }
+        }
+      }
+    };
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body class="font-body text-gone-text bg-gone-bg">
+
+  <div
+    id="loading-state"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-white text-center"
+  >
+    <div>
+      <p class="font-display text-4xl text-gone-text">GO:NE</p>
+      <p class="mt-4 text-lg text-gone-text">Loading cards...</p>
+    </div>
+  </div>
+
+  <div
+    id="error-state"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-white px-6 text-center"
+  >
+    <div>
+      <p class="font-display text-4xl text-gone-text">GO:NE</p>
+      <p class="mt-4 text-lg text-gone-text">
+        Unable to load cards right now.
+      </p>
+      <p class="mt-2 text-sm text-gone-text/70">
+        Please check your Google Sheet link or try again later.
+      </p>
+    </div>
+  </div>
+
+  <div id="app" class="min-h-screen texture-bg">
+    <div class="mx-auto flex min-h-screen w-full max-w-[820px] flex-col px-4 py-5 sm:px-6">
+
+      <!-- LANDING PAGE -->
+      <section
+        id="page-landing"
+        class="page is-active flex min-h-[calc(100vh-2.5rem)] flex-col"
+        aria-labelledby="landing-title"
+      >
+        <header class="flex flex-col gap-4">
+          <h1
+            id="landing-title"
+            class="font-display text-[4rem] leading-none tracking-[0.02em] text-gone-text sm:text-[4rem]"
+          >
+            GO:NE
+          </h1>
+
+          <nav
+            class="grid grid-cols-3 gap-2 rounded-pill bg-gone-primary"
+            aria-label="Main navigation"
+          >
+            <button
+              type="button"
+              class="nav-btn"
+              data-action="go-view"
+            >
+              view
+            </button>
+
+            <button
+              type="button"
+              class="nav-btn"
+              data-action="reset-settings"
+            >
+              reset
+            </button>
+
+            <a
+              class="nav-btn"
+              href="https://forms.gle/BxsAaiVx2rjzbXkb6"
+              target="_blank"
+              rel="noreferrer"
+            >
+              suggest
+            </a>
+          </nav>
+        </header>
+
+        <main class="flex flex-1 flex-col justify-start pt-8">
+          <section class="mx-auto w-full max-w-[680px]">
+            <h2 class="section-title">CATEGORY</h2>
+
+            <div
+              id="category-grid"
+              class="mx-auto mt-6 grid max-w-[560px] grid-cols-2 gap-x-8 gap-y-4 sm:gap-y-4"
+              aria-label="Card categories"
+            ></div>
+          </section>
+
+          <section class="mx-auto mt-16 w-full max-w-[720px]">
+            <h2 class="section-title">DEPTH</h2>
+
+            <div class="mx-auto mt-6 grid max-w-[700px] grid-cols-3 gap-4 text-center">
+              <label class="flex flex-col items-center gap-3">
+                <span class="text-[1.05rem] tracking-[0.04em]">EASY</span>
+                <input
+                  id="depth-easy"
+                  data-depth="easy"
+                  type="number"
+                  min="0"
+                  max="99"
+                  step="1"
+                  value="15"
+                  class="depth-input"
+                />
+              </label>
+
+              <label class="flex flex-col items-center gap-3">
+                <span class="text-[1.05rem] tracking-[0.04em]">MEDIUM</span>
+                <input
+                  id="depth-medium"
+                  data-depth="medium"
+                  type="number"
+                  min="0"
+                  max="99"
+                  step="1"
+                  value="15"
+                  class="depth-input"
+                />
+              </label>
+
+              <label class="flex flex-col items-center gap-3">
+                <span class="text-[1.05rem] tracking-[0.04em]">HARD</span>
+                <input
+                  id="depth-hard"
+                  data-depth="hard"
+                  type="number"
+                  min="0"
+                  max="99"
+                  step="1"
+                  value="15"
+                  class="depth-input"
+                />
+              </label>
+            </div>
+
+            <button
+              type="button"
+              class="mx-auto mt-10 block min-h-[4.25rem] min-w-[210px] rounded-pill bg-gone-primary px-10 text-[2rem] text-gone-text transition hover:opacity-90"
+              data-action="build-deck"
+            >
+              GO!
+            </button>
+          </section>
+        </main>
+
+        <footer class="pt-6 text-center text-[1.05rem]">
+          <a
+            href="https://instagram.com/go.nebeyond"
+            target="_blank"
+            rel="noreferrer"
+            class="hover:underline"
+          >
+            @go.nebeyond
+          </a>
+
+          <a
+            href="https://github.com/xxiann/convo-starters"
+            target="_blank"
+            rel="noreferrer"
+            class="hover:underline ml-4"
+          >
+            @github
+          </a>
+        </footer>
+      </section>
+
+      <!-- PLAY PAGE -->
+      <section
+        id="page-play"
+        class="page hidden min-h-[calc(100vh-2.5rem)] flex-col"
+        aria-labelledby="play-title"
+      >
+        <header class="flex flex-col gap-4">
+          <h1
+            id="play-title"
+            class="font-display text-[4rem] leading-none tracking-[0.02em] text-gone-text sm:text-[4rem]"
+          >
+            GO:NE
+          </h1>
+
+          <nav
+            class="grid grid-cols-3 gap-2 rounded-pill bg-gone-primary"
+            aria-label="Play navigation"
+          >
+            <button type="button" class="nav-btn" data-action="go-home">
+              home
+            </button>
+            <button type="button" class="nav-btn" data-action="restart-deck">
+              restart
+            </button>
+            <button type="button" class="nav-btn" data-action="end-deck">
+              end
+            </button>
+          </nav>
+        </header>
+
+        <main class="flex flex-1 flex-col items-center justify-start pt-8">
+          <article
+            id="play-card"
+            class="flex w-full max-w-[350px] min-h-[490px] flex-col rounded-card bg-gone-primary px-6 py-8 shadow-soft sm:max-w-[450px] sm:min-h-[630px] sm:px-8 sm:py-10"
+          >
+            <header>
+              <h2
+                id="card-category"
+                class="text-center font-display text-[2.3rem] leading-none tracking-[0.02em] sm:text-[3rem]"
+              >
+                FUN
+              </h2>
+            </header>
+
+            <div class="flex flex-1 items-center justify-center pt-2 pb-8">
+              <div
+                id="card-bubble"
+                class="speech-bubble max-w-[370px] rounded-[2rem] bg-gone-accent px-2 py-5 text-white"
+              >
+                <p
+                  id="card-question"
+                  class="font-display text-[2rem] leading-[1.02] sm:text-[2.2rem] text-center"
+                >
+                  What’s one career path you've considered but haven't pursued?
+                </p>
+              </div>
+            </div>
+
+            <footer>
+              <p
+                id="card-type"
+                class="text-center text-[1.2rem] uppercase tracking-[0.09em]"
+              >
+                GENERAL
+              </p>
+            </footer>
+          </article>
+
+          <div class="mt-6 grid w-full max-w-[640px] grid-cols-[72px_1fr_72px] items-center gap-4">
+            <button
+              type="button"
+              class="arrow-btn"
+              data-action="prev-card"
+              aria-label="Previous card"
+            >
+              ←
+            </button>
+
+            <div
+              id="deck-progress"
+              class="text-center text-[2rem]"
+            >
+              1/1
+            </div>
+
+            <button
+              type="button"
+              class="arrow-btn"
+              data-action="next-card"
+              aria-label="Next card"
+            >
+              →
+            </button>
+          </div>
+        </main>
+
+        <footer class="pt-6 text-center text-[1.05rem]">
+          <a
+            href="https://instagram.com/go.nebeyond"
+            target="_blank"
+            rel="noreferrer"
+            class="hover:underline"
+          >
+            @go.nebeyond
+          </a>
+
+          <a
+            href="https://github.com/xxiann/convo-starters"
+            target="_blank"
+            rel="noreferrer"
+            class="hover:underline ml-4"
+          >
+            @github
+          </a>
+        </footer>
+      </section>
+
+      <!-- VIEW PAGE -->
+      <section
+        id="page-view"
+        class="page hidden min-h-[calc(100vh-2.5rem)] flex-col"
+        aria-labelledby="view-title"
+      >
+        <header class="flex flex-col gap-4">
+          <h1
+            id="view-title"
+            class="font-display text-[4rem] leading-none tracking-[0.02em] text-gone-text sm:text-[4rem]"
+          >
+            GO:NE
+          </h1>
+
+          <nav
+            class="grid grid-cols-3 gap-2 rounded-pill bg-gone-primary"
+            aria-label="View navigation"
+          >
+            <button type="button" class="nav-btn" data-action="go-home">
+              home
+            </button>
+            <button type="button" class="nav-btn" data-action="reset-settings">
+              reset
+            </button>
+            <button type="button" class="nav-btn" data-action="back-from-view">
+              back
+            </button>
+          </nav>
+        </header>
+
+        <main class="flex-1 pt-8">
+          <section class="mx-auto w-full max-w-[760px]">
+            <h2 class="section-title">ALL PROMPTS</h2>
+            <div id="view-list" class="mt-6 grid gap-4"></div>
+          </section>
+        </main>
+
+        <footer class="pt-6 text-center text-[1.05rem]">
+          <a
+            href="https://instagram.com/go.nebeyond"
+            target="_blank"
+            rel="noreferrer"
+            class="hover:underline"
+          >
+            @go.nebeyond
+          </a>
+
+          <a
+            href="https://github.com/xxiann/convo-starters"
+            target="_blank"
+            rel="noreferrer"
+            class="hover:underline ml-4"
+          >
+            @github
+          </a>
+        </footer>
+      </section>
+
+      <!-- END PAGE -->
+      <section
+        id="page-end"
+        class="page hidden min-h-[calc(100vh-2.5rem)] flex-col"
+        aria-labelledby="end-title"
+      >
+        <header class="flex flex-col gap-4">
+          <h1
+            id="end-title"
+            class="font-display text-[4rem] leading-none tracking-[0.02em] text-gone-text sm:text-[4rem]"
+          >
+            GO:NE
+          </h1>
+
+          <nav
+            class="grid grid-cols-3 gap-2 rounded-pill bg-gone-primary"
+            aria-label="End navigation"
+          >
+            <button type="button" class="nav-btn" data-action="go-home">
+              home
+            </button>
+            <button type="button" class="nav-btn" data-action="restart-deck">
+              restart
+            </button>
+            <button type="button" class="nav-btn" data-action="go-view-session">
+              viewed
+            </button>
+          </nav>
+        </header>
+
+        <main class="flex-1 pt-8">
+          <section class="mx-auto w-full max-w-[760px]">
+            <h2 class="section-title">SESSION ENDED</h2>
+            <p id="session-summary" class="mt-3 text-center text-[1.1rem]">
+              You viewed 0 cards this session.
+            </p>
+
+            <div id="session-list" class="mt-6 grid gap-4"></div>
+          </section>
+        </main>
+
+        <footer class="pt-6 text-center text-[1.05rem]">
+          <a
+            href="https://instagram.com/go.nebeyond"
+            target="_blank"
+            rel="noreferrer"
+            class="hover:underline"
+          >
+            @go.nebeyond
+          </a>
+
+          <a
+            href="https://github.com/xxiann/convo-starters"
+            target="_blank"
+            rel="noreferrer"
+            class="hover:underline ml-4"
+          >
+            @github
+          </a>
+        </footer>
+      </section>
+    </div>
+  </div>
+
+  <script src="./js/cards.js"></script>
+  <script src="./js/state.js"></script>
+  <script src="./js/deck.js"></script>
+  <script src="./js/app.js"></script>
+</body>
+</html>
