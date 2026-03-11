@@ -8,7 +8,7 @@ Feel free to give more suggestions on this [Google Form](https://forms.gle/BxsAa
 
 All thanks to ChatGPT and the databases they are trained on :)
 
-## How its played
+# How its played
 
 1. Choose **categories** of questions.
 2. Select how many **Easy / Medium / Hard** cards you want.
