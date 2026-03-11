@@ -38,10 +38,10 @@ window.GONE_CONFIG = {
 
   categoryThemes: {
     fun: {
-      cardBackground: "#efe6cb",
-      bubbleBackground: "#b7a26b",
+      cardBackground: "#f3e3d8",
+      bubbleBackground: "#d08c60",
       bubbleText: "#ffffff",
-      text: "#3c412f"
+      text: "#3a2f41"
     },
     personal: {
       cardBackground: "#e7f0f3",
@@ -100,7 +100,8 @@ window.GONE_LOADERS = {
     const { spreadsheetId, sheetName } = window.GONE_SHEET;
     const url = `https://opensheet.elk.sh/${spreadsheetId}/${sheetName}`;
 
-    const response = await fetch(url);
+    //const response = await fetch(url);
+    const response = await fetch(url, { cache: "no-store" });
 
     if (!response.ok) {
       throw new Error(`Failed to load cards from sheet: ${response.status}`);
